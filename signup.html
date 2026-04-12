@@ -343,8 +343,12 @@
              maxlength="13" oninput="formatPhone(this)" required>
     </div>
     <div class="form-group">
-      <label for="email">구글 이메일 주소</label>
-      <input type="email" id="email" placeholder="example@gmail.com" required>
+      <label for="emailLocal">구글 이메일 주소</label>
+      <div class="input-row">
+        <input type="text" id="emailLocal" placeholder="아이디 입력" autocomplete="email" required
+               style="flex:1;border-radius:8px 0 0 8px;">
+        <span style="display:flex;align-items:center;padding:0 12px;background:#f5f5f5;border:1.5px solid #ddd;border-left:none;border-radius:0 8px 8px 0;font-size:14px;color:#555;white-space:nowrap;">@gmail.com</span>
+      </div>
     </div>
 
     <hr class="section-divider">
@@ -353,18 +357,18 @@
     <div class="section-title">사용자 계정 정보</div>
 
     <div class="form-group">
-      <label for="userId">공업사 공용 아이디</label>
+      <label for="userId">공업사 관리자 아이디</label>
       <div class="input-row">
         <input type="text" id="userId" autocomplete="username" required>
         <button type="button" class="btn-check" onclick="checkDuplicate()">중복 확인</button>
       </div>
     </div>
     <div class="form-group">
-      <label for="password">공업사 공용 비밀번호</label>
+      <label for="password">공업사 관리자 비밀번호</label>
       <input type="password" id="password" autocomplete="new-password" required>
     </div>
     <div class="form-group">
-      <label for="passwordConfirm">공업사 공용 비밀번호 확인</label>
+      <label for="passwordConfirm">공업사 관리자 비밀번호 확인</label>
       <input type="password" id="passwordConfirm" autocomplete="new-password" required>
     </div>
 
@@ -504,14 +508,14 @@
     // 비밀번호
     const pw  = document.getElementById('password').value;
     const pw2 = document.getElementById('passwordConfirm').value;
-    if (pw.length < 8) { alert('비밀번호는 8자 이상 입력해주세요.'); return; }
+    if (pw.length < 4) { alert('비밀번호는 4자 이상 입력해주세요.'); return; }
     if (pw !== pw2)    { alert('비밀번호가 일치하지 않습니다.'); return; }
 
     const customerData = {
       companyName: document.getElementById('companyName').value.trim(),
       bizNumber:   document.getElementById('bizNumber').value.trim(),
       phone:       document.getElementById('phone').value.trim(),
-      email:       document.getElementById('email').value.trim(),
+      email:       document.getElementById('emailLocal').value.trim() + '@gmail.com',
       userId:      document.getElementById('userId').value.trim(),
     };
 
