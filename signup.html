@@ -426,11 +426,14 @@
   /* =====================================================================
      세션 확인 — 로그인 안 되어 있으면 로그인 페이지로
      ===================================================================== */
-  const token      = localStorage.getItem('wp_token');
-  const agencyId   = localStorage.getItem('wp_agency_id');
+  const token       = localStorage.getItem('wp_token');
+  const agencyId    = localStorage.getItem('wp_agency_id');
   const licenseCode = localStorage.getItem('wp_license_code');
+  const expiry      = parseInt(localStorage.getItem('wp_expiry') || '0');
 
-  if (!token) {
+  // 토큰 없거나 만료 시 로그인 페이지로
+  if (!token || (expiry > 0 && Date.now() > expiry)) {
+    localStorage.clear();
     location.href = 'login.html';
   } else {
     // 세션 유효성 서버 검증
@@ -496,6 +499,19 @@
      ===================================================================== */
   document.getElementById('signupForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // 필수 입력 항목 검사
+    const companyName = document.getElementById('companyName').value.trim();
+    const bizNumber   = document.getElementById('bizNumber').value.trim();
+    const phone       = document.getElementById('phone').value.trim();
+    const emailLocal  = document.getElementById('emailLocal').value.trim();
+    const userId      = document.getElementById('userId').value.trim();
+
+    if (!companyName) { alert('공업사 상호를 입력해주세요.'); document.getElementById('companyName').focus(); return; }
+    if (!bizNumber)   { alert('사업자 등록번호를 입력해주세요.'); document.getElementById('bizNumber').focus(); return; }
+    if (!phone)       { alert('담당자 연락처를 입력해주세요.'); document.getElementById('phone').focus(); return; }
+    if (!emailLocal)  { alert('구글 이메일 주소를 입력해주세요.'); document.getElementById('emailLocal').focus(); return; }
+    if (!userId)      { alert('공업사 관리자 아이디를 입력해주세요.'); document.getElementById('userId').focus(); return; }
 
     // 약관
     if (!document.getElementById('termService').checked) {

@@ -114,6 +114,32 @@
       line-height: 1.7;
     }
 
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0 4px;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      user-select: none;
+    }
+    .remember-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #0D9488;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .session-info {
+      text-align: center;
+      font-size: 11px;
+      color: #bbb;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
     @media (max-width: 420px) {
       .card { padding: 40px 24px 36px; }
     }
@@ -139,8 +165,13 @@
       <input type="password" id="password" autocomplete="current-password"
              placeholder="" required>
     </div>
+    <label class="remember-row">
+      <input type="checkbox" id="rememberMe">
+      로그인 상태 유지 (30일)
+    </label>
     <button type="submit" class="btn-login" id="loginBtn">로그인</button>
     <div class="error-box" id="errorBox"></div>
+    <div class="session-info" id="sessionInfo"></div>
   </form>
 
   <div class="footer">
@@ -156,11 +187,18 @@
   const API_URL = 'https://script.google.com/macros/s/AKfycbyTwANV_2jBMTq9pENtMzGRsZfFPFm-vpD4tgDWENn6WWpAUYgy5p5for7ZMOphwaYR/exec';
 
   /* =====================================================================
-     이미 로그인된 경우 바로 신청 페이지로
+     이미 로그인된 경우 바로 신청 페이지로 (만료 시간 확인)
      ===================================================================== */
   (async () => {
-    const token = localStorage.getItem('wp_token');
-    if (!token) return;
+    const token  = localStorage.getItem('wp_token');
+    const expiry = parseInt(localStorage.getItem('wp_expiry') || '0');
+
+    // 토큰 없거나 만료됐으면 자동 로그인 건너뜀
+    if (!token || (expiry > 0 && Date.now() > expiry)) {
+      localStorage.clear();
+      return;
+    }
+
     try {
       const res = await callAPI({ action: 'verify', token });
       if (res.success) {
@@ -169,7 +207,8 @@
         localStorage.clear();
       }
     } catch {
-      localStorage.clear();
+      // 네트워크 오류 시 만료 여부만으로 판단 (이미 위에서 통과한 상태)
+      location.href = 'signup.html';
     }
   })();
 
@@ -197,9 +236,13 @@
       const res = await callAPI({ action: 'login', agencyId, password });
 
       if (res.success) {
-        localStorage.setItem('wp_token',       res.token);
-        localStorage.setItem('wp_agency_id',   res.agencyId);
+        const rememberMe = document.getElementById('rememberMe').checked;
+        // 상태 유지 체크 시 30일, 미체크 시 8시간 자동 만료
+        const expiry = Date.now() + (rememberMe ? 30 * 24 * 60 * 60 * 1000 : 8 * 60 * 60 * 1000);
+        localStorage.setItem('wp_token',        res.token);
+        localStorage.setItem('wp_agency_id',    res.agencyId);
         localStorage.setItem('wp_license_code', res.licenseCode);
+        localStorage.setItem('wp_expiry',       expiry.toString());
         location.href = 'signup.html';
       } else {
         showError(res.message || '로그인에 실패했습니다.');
