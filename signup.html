@@ -463,7 +463,11 @@
   async function logout() {
     if (!confirm('로그아웃 하시겠습니까?')) return;
     try { await callAPI({ action: 'logout', token }); } catch {}
-    localStorage.clear();
+    // 저장된 로그인 정보(wp_saved_id, wp_saved_pw)는 유지하고 세션만 삭제
+    localStorage.removeItem('wp_token');
+    localStorage.removeItem('wp_agency_id');
+    localStorage.removeItem('wp_license_code');
+    localStorage.removeItem('wp_expiry');
     location.href = 'login.html';
   }
 
