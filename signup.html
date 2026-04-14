@@ -26,10 +26,19 @@
       top: 0;
       z-index: 10;
     }
+    .top-bar-left {
+      display: flex;
+      flex-direction: column;
+    }
     .top-bar-title {
       font-size: 14px;
       font-weight: 600;
       color: #555;
+    }
+    .top-bar-step {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 1px;
     }
     .top-bar-agency {
       font-size: 12px;
@@ -142,6 +151,16 @@
       background: #fff;
     }
     .form-group input:focus { border-color: #0D9488; }
+    .form-group input.input-error { border-color: #EF4444; }
+
+    /* 인라인 에러 메시지 */
+    .field-error {
+      display: none;
+      font-size: 12px;
+      color: #EF4444;
+      margin-top: 5px;
+    }
+    .field-error.show { display: block; }
 
     /* 아이디 + 중복확인 */
     .input-row { display: flex; gap: 8px; }
@@ -195,15 +214,6 @@
     .btn-submit:hover:not(:disabled) { background: #0f766e; }
     .btn-submit:disabled { background: #b0b0b0; cursor: default; }
 
-    /* ── 로딩 ── */
-    .loading-msg {
-      display: none;
-      text-align: center;
-      font-size: 13px;
-      color: #0D9488;
-      padding: 8px 0;
-    }
-
     /* ── 체크박스 ── */
     .checkbox-wrap { margin-top: 6px; }
     .checkbox-wrap label {
@@ -232,64 +242,6 @@
       line-height: 1.7;
     }
 
-    /* ── 완료 오버레이 ── */
-    .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-    }
-    .overlay.show { display: flex; }
-    .overlay-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 40px 28px;
-      text-align: center;
-      max-width: 300px;
-      width: 90%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-    }
-    .overlay-card .icon { font-size: 52px; margin-bottom: 16px; }
-    .overlay-card h2 { font-size: 19px; font-weight: 800; margin-bottom: 10px; }
-    .overlay-card p { font-size: 13px; color: #666; line-height: 1.6; }
-    .overlay-card .btn-next {
-      margin-top: 20px;
-      padding: 12px 28px;
-      background: #0D9488;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    /* ── 잠금 경고 ── */
-    .lock-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 200;
-    }
-    .lock-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 40px 28px;
-      text-align: center;
-      max-width: 300px;
-      width: 90%;
-    }
-    .lock-card .icon { font-size: 48px; margin-bottom: 16px; }
-    .lock-card h2 { font-size: 18px; font-weight: 800; color: #B91C1C; margin-bottom: 10px; }
-    .lock-card p { font-size: 13px; color: #666; line-height: 1.6; }
-
     @media (max-width: 480px) {
       .container { padding: 24px 16px 60px; }
       .page-title { font-size: 22px; }
@@ -300,7 +252,10 @@
 
 <!-- 상단바 -->
 <div class="top-bar">
-  <span class="top-bar-title">회원가입 신청</span>
+  <div class="top-bar-left">
+    <span class="top-bar-title">회원가입 신청</span>
+    <span class="top-bar-step">1 / 2단계</span>
+  </div>
   <span class="top-bar-agency" id="agencyLabel"></span>
   <button class="btn-logout" onclick="logout()">로그아웃</button>
 </div>
@@ -346,9 +301,11 @@
       <label for="emailLocal">구글 이메일 주소</label>
       <div class="input-row">
         <input type="text" id="emailLocal" placeholder="아이디 입력" autocomplete="email" required
-               style="flex:1;border-radius:8px 0 0 8px;">
+               style="flex:1;border-radius:8px 0 0 8px;"
+               oninput="validateEmail(this)">
         <span style="display:flex;align-items:center;padding:0 12px;background:#f5f5f5;border:1.5px solid #ddd;border-left:none;border-radius:0 8px 8px 0;font-size:14px;color:#555;white-space:nowrap;">@gmail.com</span>
       </div>
+      <span class="field-error" id="emailError">구글 아이디는 영문자와 숫자로 6~30자를 입력해주세요.</span>
     </div>
 
     <hr class="section-divider">
@@ -375,10 +332,8 @@
     <!-- 버튼 -->
     <div class="btn-group">
       <button type="button" class="btn-back" onclick="history.back()">뒤로가기</button>
-      <button type="submit" class="btn-submit" id="submitBtn">신청하기</button>
+      <button type="submit" class="btn-submit" id="submitBtn">다음</button>
     </div>
-
-    <div class="loading-msg" id="loadingMsg">⏳ 신청 접수 중...</div>
 
     <div class="checkbox-wrap">
       <label>
@@ -398,25 +353,6 @@
   </div>
 </div>
 
-<!-- 완료 팝업 -->
-<div class="overlay" id="overlay">
-  <div class="overlay-card">
-    <div class="icon">✅</div>
-    <h2>신청이 완료되었습니다!</h2>
-    <p>담당자가 확인 후<br>빠르게 연락드릴 예정입니다.</p>
-    <button class="btn-next" onclick="resetForm()">다음 신청하기</button>
-  </div>
-</div>
-
-<!-- 계정 잠금 팝업 -->
-<div class="lock-overlay" id="lockOverlay">
-  <div class="lock-card">
-    <div class="icon">🔒</div>
-    <h2>계정이 잠겼습니다</h2>
-    <p>비정상적인 활동이 감지되어<br>계정이 자동으로 잠겼습니다.<br><br>관리자에게 문의해주세요.<br><strong>1660-4945</strong></p>
-  </div>
-</div>
-
 <script>
   /* =====================================================================
      설정
@@ -433,17 +369,22 @@
 
   // 토큰 없거나 만료 시 로그인 페이지로
   if (!token || (expiry > 0 && Date.now() > expiry)) {
-    localStorage.clear();
+    localStorage.removeItem('wp_token');
+    localStorage.removeItem('wp_agency_id');
+    localStorage.removeItem('wp_license_code');
+    localStorage.removeItem('wp_expiry');
     location.href = 'login.html';
   } else {
     // 세션 유효성 서버 검증
     callAPI({ action: 'verify', token })
       .then(res => {
         if (!res.success) {
-          localStorage.clear();
+          localStorage.removeItem('wp_token');
+          localStorage.removeItem('wp_agency_id');
+          localStorage.removeItem('wp_license_code');
+          localStorage.removeItem('wp_expiry');
           location.href = 'login.html';
         } else {
-          // 라이센스 + 대행사 표시
           document.getElementById('licenseDisplay').textContent = res.licenseCode || licenseCode;
           document.getElementById('licenseCode').value          = res.licenseCode || licenseCode;
           document.getElementById('agencyLabel').textContent    = agencyId;
@@ -488,6 +429,25 @@
   }
 
   /* =====================================================================
+     구글 이메일 실시간 유효성 검사 (영문자·숫자 6~30자)
+     ===================================================================== */
+  function validateEmail(input) {
+    const val = input.value.trim();
+    const ok  = /^[a-zA-Z0-9]{6,30}$/.test(val);
+    const errEl = document.getElementById('emailError');
+    if (val === '') {
+      input.classList.remove('input-error');
+      errEl.classList.remove('show');
+    } else if (!ok) {
+      input.classList.add('input-error');
+      errEl.classList.add('show');
+    } else {
+      input.classList.remove('input-error');
+      errEl.classList.remove('show');
+    }
+  }
+
+  /* =====================================================================
      아이디 중복 확인
      TODO: 개발팀 API 연동 후 아래 fetch 호출로 교체
      ===================================================================== */
@@ -499,9 +459,9 @@
   }
 
   /* =====================================================================
-     폼 제출
+     폼 제출 — 유효성 검사 후 review.html로 이동
      ===================================================================== */
-  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  document.getElementById('signupForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
     // 필수 입력 항목 검사
@@ -515,7 +475,13 @@
     if (!bizNumber)   { alert('사업자 등록번호를 입력해주세요.'); document.getElementById('bizNumber').focus(); return; }
     if (!phone)       { alert('담당자 연락처를 입력해주세요.'); document.getElementById('phone').focus(); return; }
     if (!emailLocal)  { alert('구글 이메일 주소를 입력해주세요.'); document.getElementById('emailLocal').focus(); return; }
-    if (!userId)      { alert('공업사 관리자 아이디를 입력해주세요.'); document.getElementById('userId').focus(); return; }
+    if (!/^[a-zA-Z0-9]{6,30}$/.test(emailLocal)) {
+      document.getElementById('emailLocal').focus();
+      document.getElementById('emailLocal').classList.add('input-error');
+      document.getElementById('emailError').classList.add('show');
+      return;
+    }
+    if (!userId) { alert('공업사 관리자 아이디를 입력해주세요.'); document.getElementById('userId').focus(); return; }
 
     // 약관
     if (!document.getElementById('termService').checked) {
@@ -528,57 +494,24 @@
     // 비밀번호
     const pw  = document.getElementById('password').value;
     const pw2 = document.getElementById('passwordConfirm').value;
-    if (pw.length < 4) { alert('비밀번호는 4자 이상 입력해주세요.'); return; }
-    if (pw !== pw2)    { alert('비밀번호가 일치하지 않습니다.'); return; }
+    if (!pw) { alert('비밀번호를 입력해주세요.'); document.getElementById('password').focus(); return; }
+    if (pw.length < 4) { alert('비밀번호는 4자 이상 입력해주세요.'); document.getElementById('password').focus(); return; }
+    if (pw !== pw2)    { alert('비밀번호가 일치하지 않습니다.'); document.getElementById('passwordConfirm').focus(); return; }
 
-    const customerData = {
-      companyName: document.getElementById('companyName').value.trim(),
-      bizNumber:   document.getElementById('bizNumber').value.trim(),
-      phone:       document.getElementById('phone').value.trim(),
-      email:       document.getElementById('emailLocal').value.trim() + '@gmail.com',
-      userId:      document.getElementById('userId').value.trim(),
-    };
+    // 모든 검사 통과 → sessionStorage에 저장 후 확인 페이지로 이동
+    const currentLicense = document.getElementById('licenseCode').value;
+    sessionStorage.setItem('wp_review_data', JSON.stringify({
+      companyName,
+      bizNumber,
+      phone,
+      email: emailLocal + '@gmail.com',
+      userId,
+      password: pw,
+      licenseCode: currentLicense,
+    }));
 
-    document.getElementById('loadingMsg').style.display = 'block';
-    document.getElementById('submitBtn').disabled = true;
-
-    try {
-      // ① Apps Script: 신청 기록 + 이상 감지
-      const logRes = await callAPI({ action: 'log', token, customerData });
-
-      if (!logRes.success) {
-        if (logRes.locked) {
-          // 계정 잠금 처리
-          localStorage.clear();
-          document.getElementById('lockOverlay').style.display = 'flex';
-          return;
-        }
-        alert(logRes.message || '오류가 발생했습니다.');
-        return;
-      }
-
-      // ② TODO: 위페어 파트너스 API 가입 신청
-      // const signupRes = await fetch(WEPAIR_API + '/signup', { ... });
-
-      document.getElementById('overlay').classList.add('show');
-
-    } catch (err) {
-      alert('제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-    } finally {
-      document.getElementById('loadingMsg').style.display = 'none';
-      document.getElementById('submitBtn').disabled = false;
-    }
+    location.href = 'review.html';
   });
-
-  /* =====================================================================
-     완료 후 폼 초기화 (연속 신청용)
-     ===================================================================== */
-  function resetForm() {
-    document.getElementById('overlay').classList.remove('show');
-    document.getElementById('signupForm').reset();
-    document.getElementById('licenseCode').value =
-      localStorage.getItem('wp_license_code') || '';
-  }
 
   /* =====================================================================
      공통 API 호출 (text/plain → Apps Script CORS 우회)

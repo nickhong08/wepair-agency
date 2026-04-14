@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>위페어 파트너스 - 회원가입 정보 확인</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f7f7f7;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    /* ── 상단바 ── */
+    .top-bar {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .top-bar-left {
+      display: flex;
+      flex-direction: column;
+    }
+    .top-bar-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+    }
+    .top-bar-step {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 1px;
+    }
+    .top-bar-agency {
+      font-size: 12px;
+      color: #0D9488;
+      font-weight: 700;
+    }
+    .btn-logout {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: #888;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-logout:hover { border-color: #bbb; color: #555; }
+
+    /* ── 컨테이너 ── */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+      background: #fff;
+      min-height: 100vh;
+    }
+
+    /* ── 헤더 ── */
+    .page-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 32px;
+    }
+
+    /* ── 섹션 ── */
+    .section-title {
+      text-align: center;
+      font-size: 17px;
+      font-weight: 800;
+      margin: 0 0 16px;
+    }
+
+    /* ── 정보 카드 ── */
+    .info-card {
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 4px 0;
+      margin-bottom: 20px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label {
+      font-size: 13px;
+      color: #777;
+      flex-shrink: 0;
+      margin-right: 16px;
+    }
+    .info-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+      text-align: right;
+      word-break: break-all;
+    }
+
+    /* ── 구분선 ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid #f0f0f0;
+      margin: 24px 0;
+    }
+
+    /* ── 확인 문구 ── */
+    .confirm-text {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      margin: 28px 0 20px;
+    }
+
+    /* ── 버튼 ── */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .btn-back {
+      flex: 1;
+      padding: 15px;
+      background: #fff;
+      color: #555;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-submit {
+      flex: 2;
+      padding: 15px;
+      background: #0D9488;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover:not(:disabled) { background: #0f766e; }
+    .btn-submit:disabled { background: #b0b0b0; cursor: default; }
+
+    /* ── 로딩 ── */
+    .loading-msg {
+      display: none;
+      text-align: center;
+      font-size: 13px;
+      color: #0D9488;
+      padding: 10px 0 0;
+    }
+
+    /* ── 완료 오버레이 ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .overlay.show { display: flex; }
+    .overlay-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 28px;
+      text-align: center;
+      max-width: 300px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .overlay-card .icon { font-size: 52px; margin-bottom: 16px; }
+    .overlay-card h2 { font-size: 19px; font-weight: 800; margin-bottom: 10px; }
+    .overlay-card p { font-size: 13px; color: #666; line-height: 1.6; }
+    .overlay-card .btn-next {
+      margin-top: 20px;
+      padding: 12px 28px;
+      background: #0D9488;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ── 잠금 경고 ── */
+    .lock-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+    .lock-overlay.show { display: flex; }
+    .lock-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 28px;
+      text-align: center;
+      max-width: 300px;
+      width: 90%;
+    }
+    .lock-card .icon { font-size: 48px; margin-bottom: 16px; }
+    .lock-card h2 { font-size: 18px; font-weight: 800; color: #B91C1C; margin-bottom: 10px; }
+    .lock-card p { font-size: 13px; color: #666; line-height: 1.6; }
+
+    /* ── 푸터 ── */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-top: 32px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 24px 16px 60px; }
+      .page-title { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 상단바 -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <span class="top-bar-title">회원가입 신청</span>
+    <span class="top-bar-step">2 / 2단계</span>
+  </div>
+  <span class="top-bar-agency" id="agencyLabel"></span>
+  <button class="btn-logout" onclick="logout()">로그아웃</button>
+</div>
+
+<div class="container">
+
+  <h1 class="page-title">회원가입 정보 확인</h1>
+
+  <!-- 사업자 정보 -->
+  <div class="section-title">사업자 정보</div>
+  <div class="info-card">
+    <div class="info-row">
+      <span class="info-label">공업사 상호</span>
+      <span class="info-value" id="rv-companyName">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">사업자 등록번호</span>
+      <span class="info-value" id="rv-bizNumber">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">담당자 연락처</span>
+      <span class="info-value" id="rv-phone">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">구글 계정 이메일</span>
+      <span class="info-value" id="rv-email">—</span>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 사용자 계정 정보 -->
+  <div class="section-title">사용자 계정 정보</div>
+  <div class="info-card">
+    <div class="info-row">
+      <span class="info-label">공업사 관리자 아이디</span>
+      <span class="info-value" id="rv-userId">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">공업사 관리자 비밀번호</span>
+      <span class="info-value" id="rv-password">—</span>
+    </div>
+  </div>
+
+  <p class="confirm-text">위 내용으로 신청하시겠습니까?</p>
+
+  <div class="btn-group">
+    <button class="btn-back" onclick="goBack()">뒤로가기</button>
+    <button class="btn-submit" id="submitBtn" onclick="submitForm()">신청하기</button>
+  </div>
+
+  <div class="loading-msg" id="loadingMsg">⏳ 신청 접수 중...</div>
+
+  <div class="footer">
+    신청에 어려움을 겪으신다면<br>
+    위페어 파트너스 고객 센터 <strong>1660-4945</strong>로 문의해주세요
+  </div>
+</div>
+
+<!-- 완료 오버레이 -->
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="icon">✅</div>
+    <h2>신청이 완료되었습니다!</h2>
+    <p>담당자가 확인 후<br>빠르게 연락드릴 예정입니다.</p>
+    <button class="btn-next" onclick="nextSignup()">다음 신청하기</button>
+  </div>
+</div>
+
+<!-- 계정 잠금 팝업 -->
+<div class="lock-overlay" id="lockOverlay">
+  <div class="lock-card">
+    <div class="icon">🔒</div>
+    <h2>계정이 잠겼습니다</h2>
+    <p>비정상적인 활동이 감지되어<br>계정이 자동으로 잠겼습니다.<br><br>관리자에게 문의해주세요.<br><strong>1660-4945</strong></p>
+  </div>
+</div>
+
+<script>
+  /* =====================================================================
+     설정
+     ===================================================================== */
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyTwANV_2jBMTq9pENtMzGRsZfFPFm-vpD4tgDWENn6WWpAUYgy5p5for7ZMOphwaYR/exec';
+
+  /* =====================================================================
+     세션 확인
+     ===================================================================== */
+  const token       = localStorage.getItem('wp_token');
+  const agencyId    = localStorage.getItem('wp_agency_id');
+  const expiry      = parseInt(localStorage.getItem('wp_expiry') || '0');
+
+  if (!token || (expiry > 0 && Date.now() > expiry)) {
+    localStorage.removeItem('wp_token');
+    localStorage.removeItem('wp_agency_id');
+    localStorage.removeItem('wp_license_code');
+    localStorage.removeItem('wp_expiry');
+    location.href = 'login.html';
+  } else {
+    document.getElementById('agencyLabel').textContent = agencyId || '';
+  }
+
+  /* =====================================================================
+     신청 데이터 표시 (sessionStorage에서 읽기)
+     ===================================================================== */
+  const raw = sessionStorage.getItem('wp_review_data');
+  if (!raw) {
+    // 직접 접근 시 signup으로 돌려보냄
+    location.href = 'signup.html';
+  }
+
+  const data = JSON.parse(raw || '{}');
+  document.getElementById('rv-companyName').textContent = data.companyName || '—';
+  document.getElementById('rv-bizNumber').textContent   = data.bizNumber   || '—';
+  document.getElementById('rv-phone').textContent       = data.phone       || '—';
+  document.getElementById('rv-email').textContent       = data.email       || '—';
+  document.getElementById('rv-userId').textContent      = data.userId      || '—';
+  // 비밀번호는 마스킹 표시
+  document.getElementById('rv-password').textContent    = data.password ? '•'.repeat(data.password.length) : '—';
+
+  /* =====================================================================
+     뒤로가기
+     ===================================================================== */
+  function goBack() {
+    history.back();
+  }
+
+  /* =====================================================================
+     최종 신청 제출
+     ===================================================================== */
+  async function submitForm() {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    document.getElementById('loadingMsg').style.display = 'block';
+
+    const customerData = {
+      companyName: data.companyName,
+      bizNumber:   data.bizNumber,
+      phone:       data.phone,
+      email:       data.email,
+      userId:      data.userId,
+      licenseCode: data.licenseCode,
+    };
+
+    try {
+      // Apps Script: 신청 기록 + 이상 감지
+      const logRes = await callAPI({ action: 'log', token, customerData });
+
+      if (!logRes.success) {
+        if (logRes.locked) {
+          localStorage.removeItem('wp_token');
+          localStorage.removeItem('wp_agency_id');
+          localStorage.removeItem('wp_license_code');
+          localStorage.removeItem('wp_expiry');
+          document.getElementById('lockOverlay').classList.add('show');
+          return;
+        }
+        alert(logRes.message || '오류가 발생했습니다.');
+        return;
+      }
+
+      // TODO: 위페어 파트너스 API 가입 신청 (개발팀 API 연동 후 추가)
+      // const signupRes = await fetch(WEPAIR_API + '/signup', { ... });
+
+      sessionStorage.removeItem('wp_review_data');
+      document.getElementById('overlay').classList.add('show');
+
+    } catch (err) {
+      alert('제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      document.getElementById('loadingMsg').style.display = 'none';
+      btn.disabled = false;
+    }
+  }
+
+  /* =====================================================================
+     완료 후 다음 신청
+     ===================================================================== */
+  function nextSignup() {
+    document.getElementById('overlay').classList.remove('show');
+    location.href = 'signup.html';
+  }
+
+  /* =====================================================================
+     로그아웃
+     ===================================================================== */
+  async function logout() {
+    if (!confirm('로그아웃 하시겠습니까?')) return;
+    try { await callAPI({ action: 'logout', token }); } catch {}
+    localStorage.removeItem('wp_token');
+    localStorage.removeItem('wp_agency_id');
+    localStorage.removeItem('wp_license_code');
+    localStorage.removeItem('wp_expiry');
+    location.href = 'login.html';
+  }
+
+  /* =====================================================================
+     공통 API 호출 (text/plain → Apps Script CORS 우회)
+     ===================================================================== */
+  async function callAPI(payload) {
+    const res = await fetch(API_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body:    JSON.stringify(payload),
+    });
+    return res.json();
+  }
+</script>
+
+</body>
+</html>
