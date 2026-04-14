@@ -382,6 +382,8 @@
   /* =====================================================================
      최종 신청 제출
      ===================================================================== */
+  const WEPAIR_API = 'https://v2.wepair.dev/api/v1';
+
   async function submitForm() {
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
@@ -397,7 +399,7 @@
     };
 
     try {
-      // Apps Script: 신청 기록 + 이상 감지
+      // ① Apps Script: 신청 기록 + 이상 감지
       const logRes = await callAPI({ action: 'log', token, customerData });
 
       if (!logRes.success) {
@@ -413,9 +415,31 @@
         return;
       }
 
-      // TODO: 위페어 파트너스 API 가입 신청 (개발팀 API 연동 후 추가)
-      // const signupRes = await fetch(WEPAIR_API + '/signup', { ... });
+      // ② 위페어 파트너스 API: 실제 계정 생성 (x-www-form-urlencoded)
+      const formBody = new URLSearchParams({
+        username:       data.userId,
+        password:       data.password,
+        shopname:       data.companyName,
+        businessRegNo:  data.bizNumber,
+        contactNo:      data.phone,
+        driveEmail:     data.email,
+        agreedTerms:    'yes',
+        agreedPrivacy:  'yes',
+      });
 
+      const registerRes = await fetch(`${WEPAIR_API}/register`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body:    formBody.toString(),
+      });
+
+      if (!registerRes.ok) {
+        const errData = await registerRes.json().catch(() => ({}));
+        alert(errData.message || `가입 신청에 실패했습니다. (${registerRes.status})`);
+        return;
+      }
+
+      // 성공 — appid 포함된 응답 반환됨
       sessionStorage.removeItem('wp_review_data');
       document.getElementById('overlay').classList.add('show');
 
