@@ -327,9 +327,10 @@
       <label for="userId">공업사 관리자 아이디</label>
       <div class="input-row">
         <input type="text" id="userId" autocomplete="username" required
-               oninput="resetIdCheck()">
+               maxlength="12" oninput="resetIdCheck(); validateUserId(this)">
         <button type="button" class="btn-check" id="checkBtn" onclick="checkDuplicate()">중복 확인</button>
       </div>
+      <span class="field-error" id="userIdError">아이디는 영문자·숫자 조합으로 4~12자 이내로 입력해주세요.</span>
       <span class="id-status" id="idStatus"></span>
     </div>
     <div class="form-group">
@@ -513,6 +514,23 @@
     statusEl.textContent = '';
   }
 
+  // 아이디 실시간 유효성 검사 (영문자·숫자 4~12자)
+  function validateUserId(input) {
+    const val   = input.value.trim();
+    const ok    = /^[a-zA-Z0-9]{4,12}$/.test(val);
+    const errEl = document.getElementById('userIdError');
+    if (val === '') {
+      input.classList.remove('input-error');
+      errEl.classList.remove('show');
+    } else if (!ok) {
+      input.classList.add('input-error');
+      errEl.classList.add('show');
+    } else {
+      input.classList.remove('input-error');
+      errEl.classList.remove('show');
+    }
+  }
+
   /* =====================================================================
      폼 제출 — 유효성 검사 후 review.html로 이동
      ===================================================================== */
@@ -537,6 +555,12 @@
       return;
     }
     if (!userId) { alert('공업사 관리자 아이디를 입력해주세요.'); document.getElementById('userId').focus(); return; }
+    if (!/^[a-zA-Z0-9]{4,12}$/.test(userId)) {
+      document.getElementById('userId').classList.add('input-error');
+      document.getElementById('userIdError').classList.add('show');
+      document.getElementById('userId').focus();
+      return;
+    }
     if (!idCheckPassed) { alert('아이디 중복 확인을 완료해주세요.'); document.getElementById('userId').focus(); return; }
 
     // 약관

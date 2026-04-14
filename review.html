@@ -435,7 +435,14 @@
 
       if (!registerRes.ok) {
         const errData = await registerRes.json().catch(() => ({}));
-        alert(errData.message || `가입 신청에 실패했습니다. (${registerRes.status})`);
+        // hints 배열이 있으면 상세 메시지 추출
+        let errMsg = '가입 신청에 실패했습니다.';
+        if (errData.hints && errData.hints.length > 0) {
+          errMsg = errData.hints.map(h => `[${h.path}] ${h.message}`).join('\n');
+        } else if (errData.message && errData.message !== 'InvalidRequest') {
+          errMsg = errData.message;
+        }
+        alert(errMsg);
         return;
       }
 
