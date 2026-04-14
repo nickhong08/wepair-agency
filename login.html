@@ -204,9 +204,8 @@
     const token  = localStorage.getItem('wp_token');
     const expiry = parseInt(localStorage.getItem('wp_expiry') || '0');
 
-    // 토큰 없거나 만료됐으면 자동 로그인 건너뜀
-    if (!token || (expiry > 0 && Date.now() > expiry)) {
-      // 세션 관련 항목만 제거 (저장된 로그인 정보는 유지)
+    // 토큰 없거나 / expiry 미설정(구버전 세션) / 만료된 경우 → 세션 제거 후 로그인 유지
+    if (!token || !expiry || Date.now() > expiry) {
       localStorage.removeItem('wp_token');
       localStorage.removeItem('wp_agency_id');
       localStorage.removeItem('wp_license_code');
@@ -219,14 +218,14 @@
       if (res.success) {
         location.href = 'signup.html';
       } else {
+        // 서버에서 세션 무효 판정 → 세션 제거, 로그인 페이지 유지
         localStorage.removeItem('wp_token');
         localStorage.removeItem('wp_agency_id');
         localStorage.removeItem('wp_license_code');
         localStorage.removeItem('wp_expiry');
       }
     } catch {
-      // 네트워크 오류 시 만료 여부만으로 판단 (이미 위에서 통과한 상태)
-      location.href = 'signup.html';
+      // 네트워크 오류 시 리다이렉트 금지 — 로그인 페이지에서 대기
     }
   })();
 
