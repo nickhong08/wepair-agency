@@ -317,7 +317,7 @@
   <div class="overlay-card">
     <div class="icon">✅</div>
     <h2>신청이 완료되었습니다!</h2>
-    <p>담당자가 확인 후<br>빠르게 연락드릴 예정입니다.</p>
+    <p id="overlayMsg" style="white-space:pre-line;">가입 신청 및 라이센스 적용이<br>완료되었습니다.</p>
     <button class="btn-next" onclick="nextSignup()">다음 신청하기</button>
   </div>
 </div>
@@ -446,7 +446,25 @@
         return;
       }
 
-      // 성공 — appid 포함된 응답 반환됨
+      // ③ 가입 성공 — appid 추출 후 KYC 자동 승인
+      const registerData = await registerRes.json().catch(() => ({}));
+      const appid = registerData.appid || '';
+
+      const kycRes = await callAPI({ action: 'kyc', token, appid });
+
+      if (!kycRes.success) {
+        if (kycRes.needAdminLogin) {
+          // 관리자 쿠키 만료 — 가입은 완료됐으나 라이센스 미적용 안내
+          sessionStorage.removeItem('wp_review_data');
+          document.getElementById('overlayMsg').textContent =
+            '가입 신청은 완료되었습니다.\n관리자 로그인이 필요하여 라이센스는 수동으로 처리됩니다.\n관리자에게 문의해주세요. (1660-4945)';
+          document.getElementById('overlay').classList.add('show');
+          return;
+        }
+        // 기타 KYC 오류 — 가입은 완료 처리
+        console.warn('KYC 오류:', kycRes.message);
+      }
+
       sessionStorage.removeItem('wp_review_data');
       document.getElementById('overlay').classList.add('show');
 

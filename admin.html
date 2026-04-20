@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>위페어 파트너스 - 관리자</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0faf9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 52px 40px 44px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 8px 40px rgba(13, 148, 136, 0.10);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .logo-badge {
+      display: inline-block;
+      background: #fff7ed;
+      border: 1.5px solid #fed7aa;
+      border-radius: 50px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ea580c;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111;
+    }
+    .logo p {
+      font-size: 13px;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    /* ── 스텝 ── */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    /* ── PIN 패드 ── */
+    .pin-display {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 24px 0 28px;
+    }
+    .pin-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+      background: #fff;
+      transition: all 0.15s;
+    }
+    .pin-dot.filled {
+      background: #0D9488;
+      border-color: #0D9488;
+    }
+
+    .pin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .pin-btn {
+      padding: 18px;
+      background: #f8f8f8;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #222;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .pin-btn:hover  { background: #efefef; }
+    .pin-btn:active { background: #e0e0e0; }
+    .pin-btn.del    { font-size: 16px; color: #888; }
+    .pin-btn.empty  { background: transparent; cursor: default; }
+
+    /* ── 폼 ── */
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #444;
+    }
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+    input:focus { border-color: #0D9488; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 15px;
+      background: #0D9488;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover:not(:disabled) { background: #0f766e; }
+    .btn-primary:disabled { background: #a8d8d5; cursor: default; }
+
+    .error-box {
+      display: none;
+      background: #FEF2F2;
+      border: 1.5px solid #FCA5A5;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #B91C1C;
+      margin-top: 14px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── 성공 화면 ── */
+    .success-box {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .success-icon { font-size: 52px; margin-bottom: 16px; }
+    .success-box h2 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .success-box p  { font-size: 13px; color: #666; line-height: 1.7; }
+
+    .status-card {
+      background: #F0FDF4;
+      border: 1.5px solid #86EFAC;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    .status-card .s-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #16A34A;
+      margin-bottom: 4px;
+    }
+    .status-card .s-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #166534;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 13px;
+      background: #fff;
+      color: #555;
+      border: 1.5px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover { border-color: #bbb; color: #333; }
+
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #f0f0f0;
+      font-size: 12px;
+      color: #bbb;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 420px) {
+      .card { padding: 40px 24px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">
+    <div class="logo-badge">관리자 전용</div>
+    <h1>위페어 파트너스</h1>
+    <p id="logoDesc">PIN 번호를 입력해주세요</p>
+  </div>
+
+  <!-- STEP 1: PIN 입력 -->
+  <div class="step active" id="stepPin">
+    <div class="pin-display">
+      <div class="pin-dot" id="dot0"></div>
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+    </div>
+
+    <div class="pin-grid">
+      <button class="pin-btn" onclick="pressPin('1')">1</button>
+      <button class="pin-btn" onclick="pressPin('2')">2</button>
+      <button class="pin-btn" onclick="pressPin('3')">3</button>
+      <button class="pin-btn" onclick="pressPin('4')">4</button>
+      <button class="pin-btn" onclick="pressPin('5')">5</button>
+      <button class="pin-btn" onclick="pressPin('6')">6</button>
+      <button class="pin-btn" onclick="pressPin('7')">7</button>
+      <button class="pin-btn" onclick="pressPin('8')">8</button>
+      <button class="pin-btn" onclick="pressPin('9')">9</button>
+      <button class="pin-btn empty"></button>
+      <button class="pin-btn" onclick="pressPin('0')">0</button>
+      <button class="pin-btn del" onclick="deletePin()">⌫</button>
+    </div>
+
+    <div class="error-box" id="pinError">PIN이 올바르지 않습니다.</div>
+  </div>
+
+  <!-- STEP 2: 관리자 로그인 -->
+  <div class="step" id="stepLogin">
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="adminId">아이디</label>
+        <input type="text" id="adminId" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label for="adminPw">비밀번호</label>
+        <input type="password" id="adminPw" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-primary" id="loginBtn">로그인</button>
+      <div class="error-box" id="loginError"></div>
+    </form>
+  </div>
+
+  <!-- STEP 3: 로그인 완료 -->
+  <div class="step" id="stepDone">
+    <div class="success-box">
+      <div class="success-icon">🔓</div>
+      <h2>승인 권한 활성화</h2>
+      <p>관리자 로그인이 완료되었습니다.<br>가입 신청 시 라이센스가 자동으로 승인됩니다.</p>
+      <div class="status-card">
+        <div class="s-label">마지막 로그인</div>
+        <div class="s-value" id="loginTime">—</div>
+      </div>
+      <button class="btn-primary" onclick="reLogin()">다시 로그인</button>
+      <button class="btn-secondary" onclick="goSignup()">신청 페이지로 이동</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    위페어 파트너스 관리자 전용 페이지<br>
+    문의: <strong>1660-4945</strong>
+  </div>
+</div>
+
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyTwANV_2jBMTq9pENtMzGRsZfFPFm-vpD4tgDWENn6WWpAUYgy5p5for7ZMOphwaYR/exec';
+
+  /* =====================================================================
+     PIN 입력
+     ===================================================================== */
+  let pinInput = '';
+
+  function pressPin(num) {
+    if (pinInput.length >= 4) return;
+    pinInput += num;
+    updateDots();
+    if (pinInput.length === 4) verifyPin();
+  }
+
+  function deletePin() {
+    pinInput = pinInput.slice(0, -1);
+    updateDots();
+    document.getElementById('pinError').style.display = 'none';
+  }
+
+  function updateDots() {
+    for (let i = 0; i < 4; i++) {
+      document.getElementById('dot' + i).classList.toggle('filled', i < pinInput.length);
+    }
+  }
+
+  async function verifyPin() {
+    try {
+      const res = await callAPI({ action: 'adminPinVerify', pin: pinInput });
+      if (res.success) {
+        document.getElementById('stepPin').classList.remove('active');
+        document.getElementById('stepLogin').classList.add('active');
+        document.getElementById('logoDesc').textContent = '관리자 계정으로 로그인해주세요';
+      } else {
+        document.getElementById('pinError').style.display = 'block';
+        pinInput = '';
+        updateDots();
+      }
+    } catch {
+      document.getElementById('pinError').style.display = 'block';
+      pinInput = '';
+      updateDots();
+    }
+  }
+
+  /* =====================================================================
+     관리자 로그인
+     ===================================================================== */
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('adminId').value.trim();
+    const password = document.getElementById('adminPw').value;
+    const btn      = document.getElementById('loginBtn');
+    const errBox   = document.getElementById('loginError');
+
+    if (!username || !password) {
+      showLoginError('아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = '로그인 중...';
+    errBox.style.display = 'none';
+
+    try {
+      const res = await callAPI({ action: 'adminLogin', username, password });
+      if (res.success) {
+        document.getElementById('loginTime').textContent = res.loginTime;
+        document.getElementById('stepLogin').classList.remove('active');
+        document.getElementById('stepDone').classList.add('active');
+        document.getElementById('logoDesc').textContent = '승인 권한 활성화 완료';
+      } else {
+        showLoginError(res.message || '로그인에 실패했습니다.');
+      }
+    } catch {
+      showLoginError('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = '로그인';
+    }
+  });
+
+  function showLoginError(msg) {
+    const box = document.getElementById('loginError');
+    box.textContent   = msg;
+    box.style.display = 'block';
+  }
+
+  function reLogin() {
+    document.getElementById('stepDone').classList.remove('active');
+    document.getElementById('stepLogin').classList.add('active');
+    document.getElementById('adminId').value = '';
+    document.getElementById('adminPw').value = '';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('logoDesc').textContent = '관리자 계정으로 로그인해주세요';
+  }
+
+  function goSignup() {
+    location.href = 'signup.html';
+  }
+
+  /* =====================================================================
+     공통 API 호출
+     ===================================================================== */
+  async function callAPI(payload) {
+    const res = await fetch(API_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body:    JSON.stringify(payload),
+    });
+    return res.json();
+  }
+</script>
+
+</body>
+</html>
