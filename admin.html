@@ -227,6 +227,8 @@
       <div class="pin-dot" id="dot1"></div>
       <div class="pin-dot" id="dot2"></div>
       <div class="pin-dot" id="dot3"></div>
+      <div class="pin-dot" id="dot4"></div>
+      <div class="pin-dot" id="dot5"></div>
     </div>
 
     <div class="pin-grid">
@@ -293,10 +295,10 @@
   let pinInput = '';
 
   function pressPin(num) {
-    if (pinInput.length >= 4) return;
+    if (pinInput.length >= 6) return;
     pinInput += num;
     updateDots();
-    if (pinInput.length === 4) verifyPin();
+    if (pinInput.length === 6) verifyPin();
   }
 
   function deletePin() {
@@ -306,7 +308,7 @@
   }
 
   function updateDots() {
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 6; i++) {
       document.getElementById('dot' + i).classList.toggle('filled', i < pinInput.length);
     }
   }
