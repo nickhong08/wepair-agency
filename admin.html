@@ -11,9 +11,14 @@
       font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, BlinkMacSystemFont, sans-serif;
       background: #f0faf9;
       min-height: 100vh;
+    }
+
+    /* ── 로그인 섹션 ── */
+    #loginSection {
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
       padding: 20px;
     }
 
@@ -26,10 +31,7 @@
       box-shadow: 0 8px 40px rgba(13, 148, 136, 0.10);
     }
 
-    .logo {
-      text-align: center;
-      margin-bottom: 36px;
-    }
+    .logo { text-align: center; margin-bottom: 36px; }
     .logo-badge {
       display: inline-block;
       background: #fff7ed;
@@ -42,22 +44,13 @@
       letter-spacing: 0.5px;
       margin-bottom: 14px;
     }
-    .logo h1 {
-      font-size: 22px;
-      font-weight: 800;
-      color: #111;
-    }
-    .logo p {
-      font-size: 13px;
-      color: #888;
-      margin-top: 6px;
-    }
+    .logo h1 { font-size: 22px; font-weight: 800; color: #111; }
+    .logo p  { font-size: 13px; color: #888; margin-top: 6px; }
 
-    /* ── 스텝 ── */
     .step { display: none; }
     .step.active { display: block; }
 
-    /* ── PIN 패드 ── */
+    /* PIN 패드 */
     .pin-display {
       display: flex;
       justify-content: center;
@@ -65,17 +58,13 @@
       margin: 24px 0 28px;
     }
     .pin-dot {
-      width: 14px;
-      height: 14px;
+      width: 14px; height: 14px;
       border-radius: 50%;
       border: 2px solid #ddd;
       background: #fff;
       transition: all 0.15s;
     }
-    .pin-dot.filled {
-      background: #0D9488;
-      border-color: #0D9488;
-    }
+    .pin-dot.filled { background: #0D9488; border-color: #0D9488; }
 
     .pin-grid {
       display: grid;
@@ -97,10 +86,10 @@
     }
     .pin-btn:hover  { background: #efefef; }
     .pin-btn:active { background: #e0e0e0; }
-    .pin-btn.del    { font-size: 16px; color: #888; }
-    .pin-btn.empty  { background: transparent; cursor: default; }
+    .pin-btn.del   { font-size: 16px; color: #888; }
+    .pin-btn.empty { background: transparent; cursor: default; }
 
-    /* ── 폼 ── */
+    /* 폼 */
     .form-group { margin-bottom: 16px; }
     label {
       display: block;
@@ -152,51 +141,7 @@
       line-height: 1.5;
     }
 
-    /* ── 성공 화면 ── */
-    .success-box {
-      text-align: center;
-      padding: 8px 0;
-    }
-    .success-icon { font-size: 52px; margin-bottom: 16px; }
-    .success-box h2 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
-    .success-box p  { font-size: 13px; color: #666; line-height: 1.7; }
-
-    .status-card {
-      background: #F0FDF4;
-      border: 1.5px solid #86EFAC;
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin: 20px 0;
-      text-align: left;
-    }
-    .status-card .s-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #16A34A;
-      margin-bottom: 4px;
-    }
-    .status-card .s-value {
-      font-size: 14px;
-      font-weight: 700;
-      color: #166534;
-    }
-
-    .btn-secondary {
-      width: 100%;
-      padding: 13px;
-      background: #fff;
-      color: #555;
-      border: 1.5px solid #ddd;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      margin-top: 8px;
-    }
-    .btn-secondary:hover { border-color: #bbb; color: #333; }
-
-    .footer {
+    .card-footer {
       text-align: center;
       margin-top: 28px;
       padding-top: 20px;
@@ -206,6 +151,225 @@
       line-height: 1.7;
     }
 
+    /* ── 대시보드 섹션 ── */
+    #dashboardSection { display: none; min-height: 100vh; background: #f4f6f8; }
+
+    .dash-header {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0 28px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .dash-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #111;
+    }
+    .dash-brand-badge {
+      background: #fff7ed;
+      border: 1.5px solid #fed7aa;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #ea580c;
+    }
+    .dash-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
+      display: inline-block;
+    }
+    .dash-actions { display: flex; gap: 8px; }
+    .dash-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1.5px solid #ddd;
+      background: #fff;
+      color: #555;
+      transition: all 0.15s;
+    }
+    .dash-btn:hover { border-color: #0D9488; color: #0D9488; }
+    .dash-btn.primary { background: #0D9488; color: #fff; border-color: #0D9488; }
+    .dash-btn.primary:hover { background: #0f766e; }
+
+    .dash-body { padding: 24px 28px; max-width: 1100px; margin: 0 auto; }
+
+    /* 요약 카드 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #111;
+      line-height: 1;
+    }
+    .stat-sub {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 6px;
+    }
+    .stat-card.teal  .stat-value { color: #0D9488; }
+    .stat-card.green .stat-value { color: #16a34a; }
+
+    /* 섹션 */
+    .dash-section {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    /* 기간 필터 */
+    .period-tabs { display: flex; gap: 6px; }
+    .period-btn {
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1.5px solid #e5e7eb;
+      background: #fff;
+      color: #888;
+      transition: all 0.15s;
+    }
+    .period-btn.active { background: #0D9488; color: #fff; border-color: #0D9488; }
+
+    /* 테이블 */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      border-bottom: 1.5px solid #f0f0f0;
+      white-space: nowrap;
+    }
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid #f7f7f7;
+      color: #333;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    .badge-status {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-normal   { background: #f0fdf4; color: #16a34a; }
+    .badge-locked   { background: #fef2f2; color: #b91c1c; }
+    .badge-approved { background: #f0fdf4; color: #16a34a; }
+    .badge-pending  { background: #fffbeb; color: #d97706; }
+
+    .rate-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .rate-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: #f0f0f0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .rate-bar-fill {
+      height: 100%;
+      background: #0D9488;
+      border-radius: 3px;
+      transition: width 0.4s;
+    }
+    .rate-text { font-size: 12px; font-weight: 700; color: #0D9488; min-width: 34px; }
+
+    .btn-unlock {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      background: #fff;
+      color: #b91c1c;
+      border: 1.5px solid #fca5a5;
+      transition: all 0.15s;
+    }
+    .btn-unlock:hover { background: #fef2f2; }
+
+    .loading-row td {
+      text-align: center;
+      padding: 32px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .refresh-btn {
+      font-size: 12px;
+      color: #0D9488;
+      font-weight: 600;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+    .refresh-btn:hover { text-decoration: underline; }
+
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .dash-header { padding: 0 16px; }
+      .dash-body   { padding: 16px; }
+      .dash-status { display: none; }
+    }
     @media (max-width: 420px) {
       .card { padding: 40px 24px 36px; }
     }
@@ -213,85 +377,177 @@
 </head>
 <body>
 
-<div class="card">
-  <div class="logo">
-    <div class="logo-badge">관리자 전용</div>
-    <h1>위페어 파트너스</h1>
-    <p id="logoDesc">PIN 번호를 입력해주세요</p>
-  </div>
-
-  <!-- STEP 1: PIN 입력 -->
-  <div class="step active" id="stepPin">
-    <div class="pin-display">
-      <div class="pin-dot" id="dot0"></div>
-      <div class="pin-dot" id="dot1"></div>
-      <div class="pin-dot" id="dot2"></div>
-      <div class="pin-dot" id="dot3"></div>
-      <div class="pin-dot" id="dot4"></div>
-      <div class="pin-dot" id="dot5"></div>
+<!-- ══════════════════════════════════════
+     로그인 섹션 (PIN + 관리자 로그인)
+══════════════════════════════════════ -->
+<div id="loginSection">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-badge">관리자 전용</div>
+      <h1>위페어 파트너스</h1>
+      <p id="logoDesc">PIN 번호를 입력해주세요</p>
     </div>
 
-    <div class="pin-grid">
-      <button class="pin-btn" onclick="pressPin('1')">1</button>
-      <button class="pin-btn" onclick="pressPin('2')">2</button>
-      <button class="pin-btn" onclick="pressPin('3')">3</button>
-      <button class="pin-btn" onclick="pressPin('4')">4</button>
-      <button class="pin-btn" onclick="pressPin('5')">5</button>
-      <button class="pin-btn" onclick="pressPin('6')">6</button>
-      <button class="pin-btn" onclick="pressPin('7')">7</button>
-      <button class="pin-btn" onclick="pressPin('8')">8</button>
-      <button class="pin-btn" onclick="pressPin('9')">9</button>
-      <button class="pin-btn empty"></button>
-      <button class="pin-btn" onclick="pressPin('0')">0</button>
-      <button class="pin-btn del" onclick="deletePin()">⌫</button>
+    <!-- STEP 1: PIN -->
+    <div class="step active" id="stepPin">
+      <div class="pin-display">
+        <div class="pin-dot" id="dot0"></div>
+        <div class="pin-dot" id="dot1"></div>
+        <div class="pin-dot" id="dot2"></div>
+        <div class="pin-dot" id="dot3"></div>
+        <div class="pin-dot" id="dot4"></div>
+        <div class="pin-dot" id="dot5"></div>
+      </div>
+      <div class="pin-grid">
+        <button class="pin-btn" onclick="pressPin('1')">1</button>
+        <button class="pin-btn" onclick="pressPin('2')">2</button>
+        <button class="pin-btn" onclick="pressPin('3')">3</button>
+        <button class="pin-btn" onclick="pressPin('4')">4</button>
+        <button class="pin-btn" onclick="pressPin('5')">5</button>
+        <button class="pin-btn" onclick="pressPin('6')">6</button>
+        <button class="pin-btn" onclick="pressPin('7')">7</button>
+        <button class="pin-btn" onclick="pressPin('8')">8</button>
+        <button class="pin-btn" onclick="pressPin('9')">9</button>
+        <button class="pin-btn empty"></button>
+        <button class="pin-btn" onclick="pressPin('0')">0</button>
+        <button class="pin-btn del" onclick="deletePin()">⌫</button>
+      </div>
+      <div class="error-box" id="pinError">PIN이 올바르지 않습니다.</div>
     </div>
 
-    <div class="error-box" id="pinError">PIN이 올바르지 않습니다.</div>
-  </div>
-
-  <!-- STEP 2: 관리자 로그인 -->
-  <div class="step" id="stepLogin">
-    <form id="loginForm" novalidate>
-      <div class="form-group">
-        <label for="adminId">아이디</label>
-        <input type="text" id="adminId" autocomplete="username" required>
-      </div>
-      <div class="form-group">
-        <label for="adminPw">비밀번호</label>
-        <input type="password" id="adminPw" autocomplete="current-password" required>
-      </div>
-      <button type="submit" class="btn-primary" id="loginBtn">로그인</button>
-      <div class="error-box" id="loginError"></div>
-    </form>
-  </div>
-
-  <!-- STEP 3: 로그인 완료 -->
-  <div class="step" id="stepDone">
-    <div class="success-box">
-      <div class="success-icon">🔓</div>
-      <h2>승인 권한 활성화</h2>
-      <p>관리자 로그인이 완료되었습니다.<br>가입 신청 시 라이센스가 자동으로 승인됩니다.</p>
-      <div class="status-card">
-        <div class="s-label">마지막 로그인</div>
-        <div class="s-value" id="loginTime">—</div>
-      </div>
-      <button class="btn-primary" onclick="reLogin()">다시 로그인</button>
-      <button class="btn-secondary" onclick="goSignup()">신청 페이지로 이동</button>
+    <!-- STEP 2: 관리자 로그인 -->
+    <div class="step" id="stepLogin">
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="adminId">아이디</label>
+          <input type="text" id="adminId" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label for="adminPw">비밀번호</label>
+          <input type="password" id="adminPw" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn-primary" id="loginBtn">로그인</button>
+        <div class="error-box" id="loginError"></div>
+      </form>
     </div>
-  </div>
 
-  <div class="footer">
-    위페어 파트너스 관리자 전용 페이지<br>
-    문의: <strong>1660-4945</strong>
+    <div class="card-footer">
+      위페어 파트너스 관리자 전용 페이지<br>
+      문의: <strong>1660-4945</strong>
+    </div>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════
+     대시보드 섹션
+══════════════════════════════════════ -->
+<div id="dashboardSection">
+
+  <!-- 상단 헤더 -->
+  <div class="dash-header">
+    <div class="dash-brand">
+      위페어 파트너스
+      <span class="dash-brand-badge">관리자</span>
+    </div>
+    <div class="dash-status">
+      <span class="status-dot"></span>
+      승인 권한 활성화 &nbsp;·&nbsp; 로그인:
+      <strong id="dashLoginTime">—</strong>
+    </div>
+    <div class="dash-actions">
+      <button class="dash-btn" onclick="loadDashboard()">↻ 새로고침</button>
+      <button class="dash-btn" onclick="reLogin()">재로그인</button>
+      <button class="dash-btn primary" onclick="goSignup()">신청 페이지</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- 요약 통계 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">전체 신청</div>
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-sub">누적 가입 신청 건수</div>
+      </div>
+      <div class="stat-card teal">
+        <div class="stat-label">이번 달</div>
+        <div class="stat-value" id="statMonth">—</div>
+        <div class="stat-sub" id="statMonthLabel">이번 달 신청 건수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">이번 주</div>
+        <div class="stat-value" id="statWeek">—</div>
+        <div class="stat-sub">이번 주 신청 건수</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">전체 승인율</div>
+        <div class="stat-value" id="statRate">—</div>
+        <div class="stat-sub" id="statApprovedSub">승인 완료 건수</div>
+      </div>
+    </div>
+
+    <!-- 대행사별 실적 -->
+    <div class="dash-section">
+      <div class="section-header">
+        <div class="section-title">대행사별 실적</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="period-tabs">
+            <button class="period-btn active" data-p="total" onclick="changePeriod('total', this)">전체</button>
+            <button class="period-btn" data-p="thisMonth" onclick="changePeriod('thisMonth', this)">이번 달</button>
+            <button class="period-btn" data-p="thisWeek" onclick="changePeriod('thisWeek', this)">이번 주</button>
+          </div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>대행사 ID</th>
+            <th>라이센스</th>
+            <th>신청 건수</th>
+            <th>승인 완료</th>
+            <th>승인율</th>
+            <th>계정 상태</th>
+          </tr>
+        </thead>
+        <tbody id="agencyTableBody">
+          <tr class="loading-row"><td colspan="6">데이터 불러오는 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 최근 신청 내역 -->
+    <div class="dash-section">
+      <div class="section-header">
+        <div class="section-title">최근 신청 내역</div>
+        <span style="font-size:11px; color:#aaa;">최근 20건</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>신청 일시</th>
+            <th>대행사</th>
+            <th>공업사명</th>
+            <th>아이디</th>
+            <th>처리 상태</th>
+          </tr>
+        </thead>
+        <tbody id="recentTableBody">
+          <tr class="loading-row"><td colspan="5">데이터 불러오는 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /dash-body -->
+</div><!-- /dashboardSection -->
 
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbyTwANV_2jBMTq9pENtMzGRsZfFPFm-vpD4tgDWENn6WWpAUYgy5p5for7ZMOphwaYR/exec';
 
-  /* =====================================================================
-     PIN 입력
-     ===================================================================== */
+  let dashData    = null;
+  let curPeriod   = 'total';
+
+  /* ── PIN 입력 ── */
   let pinInput = '';
 
   function pressPin(num) {
@@ -300,19 +556,16 @@
     updateDots();
     if (pinInput.length === 6) verifyPin();
   }
-
   function deletePin() {
     pinInput = pinInput.slice(0, -1);
     updateDots();
     document.getElementById('pinError').style.display = 'none';
   }
-
   function updateDots() {
     for (let i = 0; i < 6; i++) {
       document.getElementById('dot' + i).classList.toggle('filled', i < pinInput.length);
     }
   }
-
   async function verifyPin() {
     try {
       const res = await callAPI({ action: 'adminPinVerify', pin: pinInput });
@@ -322,19 +575,15 @@
         document.getElementById('logoDesc').textContent = '관리자 계정으로 로그인해주세요';
       } else {
         document.getElementById('pinError').style.display = 'block';
-        pinInput = '';
-        updateDots();
+        pinInput = ''; updateDots();
       }
     } catch {
       document.getElementById('pinError').style.display = 'block';
-      pinInput = '';
-      updateDots();
+      pinInput = ''; updateDots();
     }
   }
 
-  /* =====================================================================
-     관리자 로그인
-     ===================================================================== */
+  /* ── 관리자 로그인 ── */
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('adminId').value.trim();
@@ -342,55 +591,163 @@
     const btn      = document.getElementById('loginBtn');
     const errBox   = document.getElementById('loginError');
 
-    if (!username || !password) {
-      showLoginError('아이디와 비밀번호를 입력해주세요.');
-      return;
-    }
+    if (!username || !password) { showLoginError('아이디와 비밀번호를 입력해주세요.'); return; }
 
-    btn.disabled    = true;
-    btn.textContent = '로그인 중...';
+    btn.disabled = true; btn.textContent = '로그인 중...';
     errBox.style.display = 'none';
 
     try {
       const res = await callAPI({ action: 'adminLogin', username, password });
       if (res.success) {
-        document.getElementById('loginTime').textContent = res.loginTime;
-        document.getElementById('stepLogin').classList.remove('active');
-        document.getElementById('stepDone').classList.add('active');
-        document.getElementById('logoDesc').textContent = '승인 권한 활성화 완료';
+        document.getElementById('dashLoginTime').textContent = res.loginTime;
+        document.getElementById('loginSection').style.display   = 'none';
+        document.getElementById('dashboardSection').style.display = 'block';
+        loadDashboard();
       } else {
         showLoginError(res.message || '로그인에 실패했습니다.');
       }
     } catch {
       showLoginError('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
-      btn.disabled    = false;
-      btn.textContent = '로그인';
+      btn.disabled = false; btn.textContent = '로그인';
     }
   });
 
   function showLoginError(msg) {
     const box = document.getElementById('loginError');
-    box.textContent   = msg;
-    box.style.display = 'block';
+    box.textContent = msg; box.style.display = 'block';
   }
 
   function reLogin() {
-    document.getElementById('stepDone').classList.remove('active');
+    document.getElementById('dashboardSection').style.display = 'none';
+    document.getElementById('loginSection').style.display     = 'flex';
     document.getElementById('stepLogin').classList.add('active');
     document.getElementById('adminId').value = '';
     document.getElementById('adminPw').value = '';
     document.getElementById('loginError').style.display = 'none';
     document.getElementById('logoDesc').textContent = '관리자 계정으로 로그인해주세요';
+    pinInput = ''; updateDots();
   }
 
-  function goSignup() {
-    location.href = 'signup.html';
+  function goSignup() { location.href = 'signup.html'; }
+
+  /* ── 대시보드 로드 ── */
+  async function loadDashboard() {
+    document.getElementById('agencyTableBody').innerHTML =
+      '<tr class="loading-row"><td colspan="6">불러오는 중...</td></tr>';
+    document.getElementById('recentTableBody').innerHTML =
+      '<tr class="loading-row"><td colspan="5">불러오는 중...</td></tr>';
+
+    try {
+      const res = await callAPI({ action: 'getDashboard' });
+      if (!res.success) { alert('데이터 로드 실패: ' + res.message); return; }
+      dashData = res;
+      renderSummary(res.summary);
+      renderAgencyTable(res.agencyList, curPeriod);
+      renderRecentTable(res.recentLogs);
+    } catch(e) {
+      alert('서버 연결 오류: ' + e.message);
+    }
   }
 
-  /* =====================================================================
-     공통 API 호출
-     ===================================================================== */
+  /* ── 요약 통계 렌더 ── */
+  function renderSummary(s) {
+    document.getElementById('statTotal').textContent   = s.total.toLocaleString();
+    document.getElementById('statMonth').textContent   = s.thisMonth.toLocaleString();
+    document.getElementById('statWeek').textContent    = s.thisWeek.toLocaleString();
+    const rate = s.total > 0 ? Math.round((s.approved / s.total) * 100) : 0;
+    document.getElementById('statRate').textContent    = rate + '%';
+    document.getElementById('statApprovedSub').textContent = '승인완료 ' + s.approved + '건';
+  }
+
+  /* ── 기간 전환 ── */
+  function changePeriod(period, btn) {
+    curPeriod = period;
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (dashData) renderAgencyTable(dashData.agencyList, period);
+  }
+
+  /* ── 대행사 테이블 렌더 ── */
+  function renderAgencyTable(list, period) {
+    const tbody = document.getElementById('agencyTableBody');
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="6">등록된 대행사가 없습니다.</td></tr>';
+      return;
+    }
+
+    // 기간에 따라 신청 수 선택
+    const countKey = period === 'thisMonth' ? 'thisMonth'
+                   : period === 'thisWeek'  ? 'thisWeek'
+                   : 'total';
+
+    // 신청 수 기준 내림차순 정렬
+    const sorted = [...list].sort((a, b) => b[countKey] - a[countKey]);
+
+    tbody.innerHTML = sorted.map(a => {
+      const count    = a[countKey];
+      const approved = period === 'total' ? a.approved : '—';
+      const rate     = period === 'total' ? a.approvalRate : '—';
+      const rateNum  = period === 'total' ? a.approvalRate : 0;
+      const isLocked = a.status === '잠금';
+
+      const rateCellHtml = period === 'total'
+        ? `<div class="rate-bar-wrap">
+             <div class="rate-bar-bg"><div class="rate-bar-fill" style="width:${rateNum}%"></div></div>
+             <span class="rate-text">${rate}%</span>
+           </div>`
+        : '<span style="color:#aaa">—</span>';
+
+      const statusHtml = isLocked
+        ? `<span class="badge-status badge-locked">잠금</span>
+           <button class="btn-unlock" onclick="unlockAccount('${a.id}')">해제</button>`
+        : `<span class="badge-status badge-normal">정상</span>`;
+
+      return `<tr>
+        <td><strong>${a.id}</strong></td>
+        <td style="color:#888; font-size:12px">${a.licenseCode || '—'}</td>
+        <td><strong>${count}</strong>건</td>
+        <td>${approved === '—' ? '<span style="color:#aaa">—</span>' : approved + '건'}</td>
+        <td>${rateCellHtml}</td>
+        <td>${statusHtml}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ── 최근 신청 내역 렌더 ── */
+  function renderRecentTable(logs) {
+    const tbody = document.getElementById('recentTableBody');
+    if (!logs || logs.length === 0) {
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="5">신청 내역이 없습니다.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = logs.map(log => {
+      const isApproved = log.status === '승인완료';
+      const badgeClass = isApproved ? 'badge-approved' : 'badge-pending';
+      const label      = isApproved ? '승인완료' : log.status || '접수';
+      return `<tr>
+        <td style="font-size:12px; color:#888">${log.date}</td>
+        <td>${log.agencyId}</td>
+        <td>${log.company || '—'}</td>
+        <td style="font-size:12px; color:#666">${log.userId || '—'}</td>
+        <td><span class="badge-status ${badgeClass}">${label}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ── 계정 잠금 해제 ── */
+  async function unlockAccount(agencyId) {
+    if (!confirm(agencyId + ' 계정의 잠금을 해제하시겠습니까?')) return;
+    try {
+      const res = await callAPI({ action: 'unlockAccount', agencyId });
+      alert(res.message);
+      if (res.success) loadDashboard();
+    } catch(e) {
+      alert('오류: ' + e.message);
+    }
+  }
+
+  /* ── 공통 API 호출 ── */
   async function callAPI(payload) {
     const res = await fetch(API_URL, {
       method:  'POST',
