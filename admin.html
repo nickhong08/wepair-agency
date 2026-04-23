@@ -218,7 +218,7 @@
     /* 요약 카드 */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       margin-bottom: 24px;
     }
@@ -473,17 +473,12 @@
       <div class="stat-card teal">
         <div class="stat-label">이번 달</div>
         <div class="stat-value" id="statMonth">—</div>
-        <div class="stat-sub" id="statMonthLabel">이번 달 신청 건수</div>
+        <div class="stat-sub">이번 달 신청 건수</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">이번 주</div>
         <div class="stat-value" id="statWeek">—</div>
         <div class="stat-sub">이번 주 신청 건수</div>
-      </div>
-      <div class="stat-card green">
-        <div class="stat-label">전체 승인율</div>
-        <div class="stat-value" id="statRate">—</div>
-        <div class="stat-sub" id="statApprovedSub">승인 완료 건수</div>
       </div>
     </div>
 
@@ -505,13 +500,11 @@
             <th>대행사 ID</th>
             <th>라이센스</th>
             <th>신청 건수</th>
-            <th>승인 완료</th>
-            <th>승인율</th>
             <th>계정 상태</th>
           </tr>
         </thead>
         <tbody id="agencyTableBody">
-          <tr class="loading-row"><td colspan="6">데이터 불러오는 중...</td></tr>
+          <tr class="loading-row"><td colspan="4">데이터 불러오는 중...</td></tr>
         </tbody>
       </table>
     </div>
@@ -529,11 +522,10 @@
             <th>대행사</th>
             <th>공업사명</th>
             <th>아이디</th>
-            <th>처리 상태</th>
           </tr>
         </thead>
         <tbody id="recentTableBody">
-          <tr class="loading-row"><td colspan="5">데이터 불러오는 중...</td></tr>
+          <tr class="loading-row"><td colspan="4">데이터 불러오는 중...</td></tr>
         </tbody>
       </table>
     </div>
@@ -634,9 +626,9 @@
   /* ── 대시보드 로드 ── */
   async function loadDashboard() {
     document.getElementById('agencyTableBody').innerHTML =
-      '<tr class="loading-row"><td colspan="6">불러오는 중...</td></tr>';
+      '<tr class="loading-row"><td colspan="4">불러오는 중...</td></tr>';
     document.getElementById('recentTableBody').innerHTML =
-      '<tr class="loading-row"><td colspan="5">불러오는 중...</td></tr>';
+      '<tr class="loading-row"><td colspan="4">불러오는 중...</td></tr>';
 
     try {
       const res = await callAPI({ action: 'getDashboard' });
@@ -652,12 +644,9 @@
 
   /* ── 요약 통계 렌더 ── */
   function renderSummary(s) {
-    document.getElementById('statTotal').textContent   = s.total.toLocaleString();
-    document.getElementById('statMonth').textContent   = s.thisMonth.toLocaleString();
-    document.getElementById('statWeek').textContent    = s.thisWeek.toLocaleString();
-    const rate = s.total > 0 ? Math.round((s.approved / s.total) * 100) : 0;
-    document.getElementById('statRate').textContent    = rate + '%';
-    document.getElementById('statApprovedSub').textContent = '승인완료 ' + s.approved + '건';
+    document.getElementById('statTotal').textContent = s.total.toLocaleString();
+    document.getElementById('statMonth').textContent = s.thisMonth.toLocaleString();
+    document.getElementById('statWeek').textContent  = s.thisWeek.toLocaleString();
   }
 
   /* ── 기간 전환 ── */
@@ -686,17 +675,7 @@
 
     tbody.innerHTML = sorted.map(a => {
       const count    = a[countKey];
-      const approved = period === 'total' ? a.approved : '—';
-      const rate     = period === 'total' ? a.approvalRate : '—';
-      const rateNum  = period === 'total' ? a.approvalRate : 0;
       const isLocked = a.status === '잠금';
-
-      const rateCellHtml = period === 'total'
-        ? `<div class="rate-bar-wrap">
-             <div class="rate-bar-bg"><div class="rate-bar-fill" style="width:${rateNum}%"></div></div>
-             <span class="rate-text">${rate}%</span>
-           </div>`
-        : '<span style="color:#aaa">—</span>';
 
       const statusHtml = isLocked
         ? `<span class="badge-status badge-locked">잠금</span>
@@ -718,19 +697,15 @@
   function renderRecentTable(logs) {
     const tbody = document.getElementById('recentTableBody');
     if (!logs || logs.length === 0) {
-      tbody.innerHTML = '<tr class="loading-row"><td colspan="5">신청 내역이 없습니다.</td></tr>';
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="4">신청 내역이 없습니다.</td></tr>';
       return;
     }
     tbody.innerHTML = logs.map(log => {
-      const isApproved = log.status === '승인완료';
-      const badgeClass = isApproved ? 'badge-approved' : 'badge-pending';
-      const label      = isApproved ? '승인완료' : log.status || '접수';
       return `<tr>
         <td style="font-size:12px; color:#888">${log.date}</td>
         <td>${log.agencyId}</td>
         <td>${log.company || '—'}</td>
         <td style="font-size:12px; color:#666">${log.userId || '—'}</td>
-        <td><span class="badge-status ${badgeClass}">${label}</span></td>
       </tr>`;
     }).join('');
   }
