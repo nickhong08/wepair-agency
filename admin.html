@@ -534,10 +534,23 @@
 </div><!-- /dashboardSection -->
 
 <script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbyTwANV_2jBMTq9pENtMzGRsZfFPFm-vpD4tgDWENn6WWpAUYgy5p5for7ZMOphwaYR/exec';
+  const API_URL        = 'https://script.google.com/macros/s/AKfycbyTwANV_2jBMTq9pENtMzGRsZfFPFm-vpD4tgDWENn6WWpAUYgy5p5for7ZMOphwaYR/exec';
+  const SESSION_HOURS  = 2; // 관리자 세션 유지 시간 (시간 단위)
 
-  let dashData    = null;
-  let curPeriod   = 'total';
+  let dashData  = null;
+  let curPeriod = 'total';
+
+  /* ── 세션 복원: 페이지 로드 시 유효한 세션이면 바로 대시보드 진입 ── */
+  (function restoreSession() {
+    const expiry    = parseInt(sessionStorage.getItem('wp_admin_expiry') || '0');
+    const loginTime = sessionStorage.getItem('wp_admin_login_time') || '';
+    if (expiry && Date.now() < expiry && loginTime) {
+      document.getElementById('dashLoginTime').textContent    = loginTime;
+      document.getElementById('loginSection').style.display  = 'none';
+      document.getElementById('dashboardSection').style.display = 'block';
+      loadDashboard();
+    }
+  })();
 
   /* ── PIN 입력 ── */
   let pinInput = '';
@@ -591,7 +604,12 @@
     try {
       const res = await callAPI({ action: 'adminLogin', username, password });
       if (res.success) {
-        document.getElementById('dashLoginTime').textContent = res.loginTime;
+        // 세션 저장 (탭 닫으면 자동 소멸)
+        const expiry = Date.now() + SESSION_HOURS * 60 * 60 * 1000;
+        sessionStorage.setItem('wp_admin_expiry',     expiry.toString());
+        sessionStorage.setItem('wp_admin_login_time', res.loginTime);
+
+        document.getElementById('dashLoginTime').textContent    = res.loginTime;
         document.getElementById('loginSection').style.display   = 'none';
         document.getElementById('dashboardSection').style.display = 'block';
         loadDashboard();
@@ -611,6 +629,10 @@
   }
 
   function reLogin() {
+    // 세션 초기화
+    sessionStorage.removeItem('wp_admin_expiry');
+    sessionStorage.removeItem('wp_admin_login_time');
+
     document.getElementById('dashboardSection').style.display = 'none';
     document.getElementById('loginSection').style.display     = 'flex';
     document.getElementById('stepLogin').classList.add('active');
