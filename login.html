@@ -198,36 +198,12 @@
   }
 
   /* =====================================================================
-     이미 로그인된 경우 바로 신청 페이지로 (만료 시간 확인)
+     기존 세션 초기화 — 항상 직접 로그인 필요
      ===================================================================== */
-  (async () => {
-    const token  = localStorage.getItem('wp_token');
-    const expiry = parseInt(localStorage.getItem('wp_expiry') || '0');
-
-    // 토큰 없거나 / expiry 미설정(구버전 세션) / 만료된 경우 → 세션 제거 후 로그인 유지
-    if (!token || !expiry || Date.now() > expiry) {
-      localStorage.removeItem('wp_token');
-      localStorage.removeItem('wp_agency_id');
-      localStorage.removeItem('wp_license_code');
-      localStorage.removeItem('wp_expiry');
-      return;
-    }
-
-    try {
-      const res = await callAPI({ action: 'verify', token });
-      if (res.success) {
-        location.href = 'signup.html';
-      } else {
-        // 서버에서 세션 무효 판정 → 세션 제거, 로그인 페이지 유지
-        localStorage.removeItem('wp_token');
-        localStorage.removeItem('wp_agency_id');
-        localStorage.removeItem('wp_license_code');
-        localStorage.removeItem('wp_expiry');
-      }
-    } catch {
-      // 네트워크 오류 시 리다이렉트 금지 — 로그인 페이지에서 대기
-    }
-  })();
+  localStorage.removeItem('wp_token');
+  localStorage.removeItem('wp_agency_id');
+  localStorage.removeItem('wp_license_code');
+  localStorage.removeItem('wp_expiry');
 
   /* =====================================================================
      로그인 처리
