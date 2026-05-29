@@ -448,7 +448,7 @@
 
       // ③ 가입 성공 — appid 추출 후 KYC 자동 승인
       const registerData = await registerRes.json().catch(() => ({}));
-      const appid = registerData.appid || '';
+      const appid = registerData.application?.appid || '';
 
       const kycRes = await callAPI({ action: 'kyc', token, appid });
 
