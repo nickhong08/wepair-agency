@@ -380,89 +380,55 @@
   }
 
   /* =====================================================================
-     최종 신청 제출
+     최종 신청 제출 — Apps Script submitApplication 단일 호출
      ===================================================================== */
-  const WEPAIR_API = 'https://v2.wepair.dev/api/v1';
-
   async function submitForm() {
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     document.getElementById('loadingMsg').style.display = 'block';
 
-    const customerData = {
-      companyName: data.companyName,
-      bizNumber:   data.bizNumber,
-      phone:       data.phone,
-      email:       data.email,
-      userId:      data.userId,
-      licenseCode: data.licenseCode,
-    };
-
     try {
-      // ① Apps Script: 신청 기록 + 이상 감지
-      const logRes = await callAPI({ action: 'log', token, customerData });
+      const res = await callAPI({
+        action: 'submitApplication',
+        token,
+        customerData: {
+          companyName: data.companyName,
+          bizNumber:   data.bizNumber,
+          phone:       data.phone,
+          email:       data.email,
+          userId:      data.userId,
+          password:    data.password,   // register 호출에만 사용, 시트에 저장 안 됨
+          licenseCode: data.licenseCode,
+        },
+      });
 
-      if (!logRes.success) {
-        if (logRes.locked) {
-          localStorage.removeItem('wp_token');
-          localStorage.removeItem('wp_agency_id');
-          localStorage.removeItem('wp_license_code');
-          localStorage.removeItem('wp_expiry');
-          document.getElementById('lockOverlay').classList.add('show');
-          return;
-        }
-        alert(logRes.message || '오류가 발생했습니다.');
+      // 계정 잠금
+      if (res.locked) {
+        localStorage.removeItem('wp_token');
+        localStorage.removeItem('wp_agency_id');
+        localStorage.removeItem('wp_license_code');
+        localStorage.removeItem('wp_expiry');
+        document.getElementById('lockOverlay').classList.add('show');
         return;
       }
 
-      // ② 위페어 파트너스 API: 실제 계정 생성 (x-www-form-urlencoded)
-      const formBody = new URLSearchParams({
-        username:       data.userId,
-        password:       data.password,
-        shopname:       data.companyName,
-        businessRegNo:  data.bizNumber,
-        contactNo:      data.phone,
-        driveEmail:     data.email,
-        agreedTerms:    'yes',
-        agreedPrivacy:  'yes',
-      });
-
-      const registerRes = await fetch(`${WEPAIR_API}/register`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body:    formBody.toString(),
-      });
-
-      if (!registerRes.ok) {
-        const errData = await registerRes.json().catch(() => ({}));
-        // hints 배열이 있으면 상세 메시지 추출
-        let errMsg = '가입 신청에 실패했습니다.';
-        if (errData.hints && errData.hints.length > 0) {
-          errMsg = errData.hints.map(h => `[${h.path}] ${h.message}`).join('\n');
-        } else if (errData.message && errData.message !== 'InvalidRequest') {
-          errMsg = errData.message;
-        }
-        alert(errMsg);
+      // 가입 자체 실패
+      if (res.status === 'REGISTER_FAILED' || res.status === 'SESSION_INVALID' ||
+          res.status === 'INVALID_INPUT'   || res.status === 'DUPLICATE') {
+        alert(res.message || '신청 처리 중 오류가 발생했습니다.');
         return;
       }
 
-      // ③ 가입 성공 — appid 추출 후 KYC 자동 승인
-      const registerData = await registerRes.json().catch(() => ({}));
-      const appid = registerData.application?.appid || '';
-
-      const kycRes = await callAPI({ action: 'kyc', token, appid });
-
-      if (!kycRes.success) {
-        if (kycRes.needAdminLogin) {
-          // 관리자 쿠키 만료 — 가입은 완료됐으나 라이센스 미적용 안내
-          sessionStorage.removeItem('wp_review_data');
-          document.getElementById('overlayMsg').textContent =
-            '가입 신청은 완료되었습니다.\n관리자 로그인이 필요하여 라이센스는 수동으로 처리됩니다.\n관리자에게 문의해주세요. (1660-4945)';
-          document.getElementById('overlay').classList.add('show');
-          return;
-        }
-        // 기타 KYC 오류 — 가입은 완료 처리
-        console.warn('KYC 오류:', kycRes.message);
+      // 완료 팝업 문구 분기
+      if (res.status === 'APPROVED') {
+        document.getElementById('overlayMsg').textContent =
+          '가입 신청 및 라이센스 적용이\n완료되었습니다.';
+      } else if (res.status === 'REGISTERED_KYC_PENDING') {
+        document.getElementById('overlayMsg').textContent =
+          '가입 신청은 완료되었습니다.\n관리자 인증 만료로 라이센스는\n수동으로 처리됩니다.\n문의: 1660-4945';
+      } else {
+        document.getElementById('overlayMsg').textContent =
+          res.message || '신청이 완료되었습니다.';
       }
 
       sessionStorage.removeItem('wp_review_data');
